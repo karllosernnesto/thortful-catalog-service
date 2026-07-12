@@ -24,6 +24,19 @@ The full assistant conversation will be supplied with the exercise. This file is
 - Candidate review status: Awaiting review and commit approval.
 - Modifications or rejections: To be recorded after candidate review.
 
+### Candidate review outcome
+
+- Candidate accepted the generated foundation and exact first commit message.
+- AI verification found vulnerable initial Vite/Vitest pins before commit; the AI updated them within their major versions and confirmed a zero-vulnerability npm audit result.
+- Candidate pushed the approved commit to `origin/main`.
+
+## Milestone 2 - catalog backend
+
+- Candidate instruction: Implement only the card model, DTOs, deterministic seed data, server-side pagination/search/filtering/sorting, bounded page sizes, create/delete operations, validation, HTTP responses, and focused backend tests.
+- AI contribution: Generated the backend domain, API boundary, parameterized repository query, service, seed generator, problem-detail error handling, tests, and accompanying documentation.
+- Candidate review status: Awaiting review and commit approval.
+- Explicit exclusion: No React catalog functionality or separate Milestone 3 work was included.
+
 ## Working principles
 
 - Candidate decisions and AI suggestions are labeled in `DECISIONS.md`.

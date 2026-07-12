@@ -2,7 +2,7 @@
 
 A small Spring Boot and React catalog application for the thortful backend Java technical exercise.
 
-Milestone 1 provides the runnable foundation and verifies communication between the two applications. Catalog data and operations are intentionally reserved for Milestone 2.
+The backend provides a seeded greeting-card catalog with server-side search, category filtering, pagination, creation, and deletion. The current frontend still provides only the connectivity check; catalog UI work is deliberately reserved for a later milestone.
 
 ## Requirements
 
@@ -82,6 +82,51 @@ npm run dev
 
 With both processes running locally, Vite defaults its `/api` proxy to `http://localhost:8080`. Tests can be run with `mvn test` in `backend/` and `npm test` in `frontend/`.
 
+## API
+
+### List, search, and filter cards
+
+```http
+GET /api/cards?search=maya&category=BIRTHDAY&page=0&size=20
+```
+
+All parameters are optional. Pages are zero-based, the default size is 20, and the maximum size is 100. Results are sorted by `createdAt` descending and then `id` descending so pagination is stable when timestamps match.
+
+`search` performs a case-insensitive partial match across title and artist. `category` accepts:
+
+- `ANNIVERSARY`
+- `BIRTHDAY`
+- `CONGRATULATIONS`
+- `NEW_BABY`
+- `THANK_YOU`
+- `WEDDING`
+
+The response contains `content`, `page`, `size`, `totalElements`, `totalPages`, `first`, and `last`.
+
+### Create a card
+
+```http
+POST /api/cards
+Content-Type: application/json
+
+{
+  "title": "A Brilliant New Adventure",
+  "artist": "Jamie Stone",
+  "category": "CONGRATULATIONS",
+  "price": 3.49
+}
+```
+
+A successful request returns `201 Created`, the created card, and a `Location` header. Titles and artist names are trimmed. Invalid requests return `400 Bad Request` using RFC 9457-style problem details with field errors.
+
+### Delete a card
+
+```http
+DELETE /api/cards/{id}
+```
+
+A successful deletion returns `204 No Content`. An unknown card returns `404 Not Found`.
+
 No additional platform-specific setup is currently required. On Linux, the Docker user may need permission to access the Docker daemon according to the Docker Engine installation instructions.
 
 ## Architecture
@@ -108,7 +153,7 @@ H2 in-memory database
 
 This separation adds two builds, two containers, and proxy configuration compared with serving static files from Spring Boot. The accepted benefit is clearer frontend/backend ownership, a modern React development workflow, and a reproducible setup that does not depend on host Java or Node installations.
 
-H2 is configured as `jdbc:h2:mem:catalog` with Hibernate `create-drop`. Data exists only for the lifetime of the backend process and will be rebuilt and seeded on every restart once Milestone 2 adds the catalog model. This is deliberate for a repeatable interview exercise, not a production persistence strategy.
+H2 is configured as `jdbc:h2:mem:catalog` with Hibernate `create-drop`. Data exists only for the lifetime of the backend process. The same 1,200 deterministic cards are rebuilt on every restart. Cards created or deleted through the API last only until that process stops. This is deliberate for a repeatable interview exercise, not a production persistence strategy.
 
 More detailed decisions are recorded in [DECISIONS.md](DECISIONS.md), and AI collaboration is recorded in [AI_USAGE.md](AI_USAGE.md).
 
@@ -139,6 +184,6 @@ docker compose up --build
 
 Confirm Docker can access the internet, then retry the build. Corporate proxies may need to be configured in Docker Desktop or the Docker daemon.
 
-## Planned next milestone
+## Current scope
 
-Milestone 2 will add the card entity, deterministic sample data, paginated listing, search, category filtering, creation, and deletion. Those features are intentionally absent from this foundation commit.
+The catalog backend is implemented. The React listing and mutation UI are intentionally reserved for the next frontend milestone.

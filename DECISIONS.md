@@ -47,3 +47,35 @@ This is a concise record of decisions made during the exercise. “Candidate” 
 - Decision: Prefer direct, conventional Spring and React code over additional abstraction layers.
 - Rationale: Reviewers will ask the candidate to add a feature during a 45-minute pairing interview.
 - Consequence: Interfaces, generic frameworks, authentication, external search infrastructure, and production deployment concerns remain out of scope unless requirements change.
+
+## 007 - Use explicit DTOs and a compact service boundary
+
+- Status: accepted
+- Proposed by: AI suggestion from the approved implementation plan
+- Decision: Keep the JPA entity internal, use request/response records for the API, and place query normalization and mutations in one concrete service.
+- Rationale: DTOs prevent persistence annotations from defining the HTTP contract, while a single service remains easy to follow and extend.
+- Trade-off: Mapping adds a small amount of code. Service and repository interfaces are deliberately omitted because there is only one implementation.
+
+## 008 - Use database-backed optional filters and bounded pagination
+
+- Status: accepted
+- Proposed by: AI suggestion from the approved implementation plan
+- Decision: Use one parameterized JPA query for optional title/artist search and category filtering. Pages are zero-based, default to 20 items, and are capped at 100.
+- Rationale: Filtering and pagination stay server-side and the response size remains bounded for 1,200 records.
+- Trade-off: SQL `LIKE` is sufficient at this scale but is not fuzzy or language-aware full-text search.
+
+## 009 - Use stable newest-first sorting
+
+- Status: accepted
+- Proposed by: AI suggestion
+- Decision: Sort by `createdAt DESC, id DESC` for every catalog request.
+- Rationale: A deterministic secondary key prevents items with equal timestamps from moving unpredictably between pages.
+- Trade-off: The API exposes one deliberate sort order rather than supporting arbitrary client-selected sorting.
+
+## 010 - Seed deterministic data in application code
+
+- Status: accepted
+- Proposed by: AI suggestion
+- Decision: Generate exactly 1,200 cards from fixed category, style, message, artist, price, and timestamp sequences when the database is empty.
+- Rationale: Reviewers receive realistic volume with repeatable search/filter results and no large static data file.
+- Trade-off: Generated combinations are representative rather than a curated production catalog.

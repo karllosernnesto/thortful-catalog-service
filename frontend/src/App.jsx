@@ -26,6 +26,7 @@ export default function App() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [deletingId, setDeletingId] = useState(null)
+  const [highlightedId, setHighlightedId] = useState(null)
   const [refreshKey, setRefreshKey] = useState(0)
 
   useEffect(() => {
@@ -59,6 +60,23 @@ export default function App() {
     return () => controller.abort()
   }, [search, category, page, refreshKey])
 
+  useEffect(() => {
+    if (!highlightedId) return undefined
+
+    const newCard = document.querySelector(`[data-card-id="${highlightedId}"]`)
+    if (!newCard) return undefined
+
+    const bounds = newCard.getBoundingClientRect()
+    const isVisible = bounds.top >= 0 && bounds.bottom <= window.innerHeight
+    if (!isVisible) {
+      const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+      newCard.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'nearest' })
+    }
+
+    const timeout = window.setTimeout(() => setHighlightedId(null), 3000)
+    return () => window.clearTimeout(timeout)
+  }, [highlightedId, catalog.content])
+
   function handleCategoryChange(event) {
     setCategory(event.target.value)
     setPage(0)
@@ -70,6 +88,10 @@ export default function App() {
     try {
       const created = await createCard(values)
       setSuccess(`“${created.title}” was added.`)
+      setHighlightedId(created.id)
+      setSearchInput('')
+      setSearch('')
+      setCategory('')
       setPage(0)
       setRefreshKey((current) => current + 1)
     } catch (requestError) {
@@ -162,7 +184,12 @@ export default function App() {
             <p>Try a different search or category.</p>
           </div>
         ) : (
-          <CardList cards={catalog.content} deletingId={deletingId} onDelete={handleDelete} />
+          <CardList
+            cards={catalog.content}
+            deletingId={deletingId}
+            highlightedId={highlightedId}
+            onDelete={handleDelete}
+          />
         )}
 
         {!error && catalog.content.length > 0 && (

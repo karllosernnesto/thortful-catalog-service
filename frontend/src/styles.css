@@ -128,10 +128,52 @@ input:focus, select:focus, button:focus-visible { outline: 3px solid rgba(136, 8
   background: #fdfcfd;
 }
 
+.catalog-card--highlighted {
+  border-color: #b584c5;
+  background: #faf2fc;
+  animation: card-highlight 3s ease-out;
+}
+
+@keyframes card-highlight {
+  0%, 35% {
+    border-color: #9b62ad;
+    background: #f5e7f9;
+    box-shadow: 0 0 0 0.25rem rgba(155, 98, 173, 0.12);
+  }
+  100% {
+    border-color: #e4dde8;
+    background: #fdfcfd;
+    box-shadow: none;
+  }
+}
+
 .catalog-card p { margin: 0; color: #716776; }
-.category-tag { display: inline-block; color: #765087; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; }
+.category-tag {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  color: #684477;
+  background: #f1e9f4;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
 .card-footer { margin-top: 1.25rem; }
-.delete-button { border: 0; padding: 0.35rem 0; color: #a0384f; background: transparent; font-weight: 700; }
+.delete-button {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  padding: 0;
+  color: #a0384f;
+  background: transparent;
+}
+.delete-button:hover:not(:disabled) { background: #fff0f3; }
+.delete-button:focus-visible { outline: 3px solid rgba(160, 56, 79, 0.3); outline-offset: 2px; }
+.delete-button svg { fill: currentColor; }
 
 .pagination { justify-content: center; margin-top: 1.5rem; }
 .pagination button { min-width: 6.5rem; color: #5d356d; background: #f0e9f3; }
@@ -156,4 +198,8 @@ input:focus, select:focus, button:focus-visible { outline: 3px solid rgba(136, 8
   .pagination { gap: 0.5rem; }
   .pagination button { min-width: auto; }
   .pagination span { min-width: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .catalog-card--highlighted { animation: none; }
 }

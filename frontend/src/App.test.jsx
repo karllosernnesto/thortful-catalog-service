@@ -27,8 +27,17 @@ function response(body, { ok = true, status = 200 } = {}) {
   return { ok, status, json: vi.fn().mockResolvedValue(body) }
 }
 
+function deferred() {
+  let resolve
+  const promise = new Promise((fulfil) => { resolve = fulfil })
+  return { promise, resolve }
+}
+
 describe('App', () => {
-  afterEach(() => vi.restoreAllMocks())
+  afterEach(() => {
+    vi.restoreAllMocks()
+    delete HTMLElement.prototype.scrollIntoView
+  })
 
   it('loads a paginated catalog and displays the total', async () => {
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(response(catalogPage({ totalElements: 1200, totalPages: 100 })))
@@ -38,6 +47,12 @@ describe('App', () => {
     expect(await screen.findByText(card.title)).toBeInTheDocument()
     expect(screen.getByText('1,200 results')).toBeInTheDocument()
     expect(screen.getByText('Page 1 of 100')).toBeInTheDocument()
+    expect(screen.getByText('£3.49')).toBeInTheDocument()
+    const cardItem = screen.getByText(card.title).closest('li')
+    expect(within(cardItem).getByText('Birthday')).toHaveClass('category-tag')
+    const deleteButton = screen.getByRole('button', { name: `Delete ${card.title}` })
+    expect(deleteButton).toHaveAttribute('title', `Delete ${card.title}`)
+    expect(deleteButton.querySelector('svg')).toBeInTheDocument()
     expect(fetch).toHaveBeenCalledWith('/api/cards?page=0&size=12', expect.any(Object))
   })
 
@@ -85,9 +100,13 @@ describe('App', () => {
 
   it('adds a card and refreshes the catalog', async () => {
     const created = { ...card, id: 1201, title: 'A Brilliant New Adventure', artist: 'Jamie Stone' }
+    const createRequest = deferred()
+    const scrollIntoView = vi.fn()
+    Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', { configurable: true, value: scrollIntoView })
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({ top: 900, bottom: 1100 })
     const fetchMock = vi.spyOn(globalThis, 'fetch')
       .mockResolvedValueOnce(response(catalogPage()))
-      .mockResolvedValueOnce(response(created, { status: 201 }))
+      .mockReturnValueOnce(createRequest.promise)
       .mockResolvedValueOnce(response(catalogPage({ content: [created, card], totalElements: 1201, totalPages: 101 })))
 
     render(<App />)
@@ -98,18 +117,25 @@ describe('App', () => {
     fireEvent.change(within(form).getByLabelText('Title'), { target: { value: created.title } })
     fireEvent.change(within(form).getByLabelText('Artist'), { target: { value: created.artist } })
     fireEvent.change(within(form).getByLabelText('Category'), { target: { value: 'CONGRATULATIONS' } })
-    fireEvent.click(within(form).getByRole('button', { name: 'Add to catalog' }))
+    const submitButton = within(form).getByRole('button', { name: 'Add to catalog' })
+    fireEvent.click(submitButton)
+
+    expect(within(form).getByRole('button', { name: 'Adding…' })).toBeDisabled()
+    createRequest.resolve(response(created, { status: 201 }))
 
     expect(await screen.findByText(`“${created.title}” was added.`)).toBeInTheDocument()
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(3))
+    expect(screen.getByText(created.title).closest('li')).toHaveClass('catalog-card--highlighted')
+    await waitFor(() => expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth', block: 'nearest' }))
     expect(fetchMock.mock.calls[1][0]).toBe('/api/cards')
     expect(fetchMock.mock.calls[1][1]).toMatchObject({ method: 'POST' })
   })
 
   it('asks for confirmation before deleting and refreshes after success', async () => {
+    const deleteRequest = deferred()
     const fetchMock = vi.spyOn(globalThis, 'fetch')
       .mockResolvedValueOnce(response(catalogPage()))
-      .mockResolvedValueOnce({ ok: true, status: 204, json: vi.fn() })
+      .mockReturnValueOnce(deleteRequest.promise)
       .mockResolvedValueOnce(response(catalogPage({ content: [] })))
     const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true)
 
@@ -118,6 +144,8 @@ describe('App', () => {
     fireEvent.click(screen.getByRole('button', { name: `Delete ${card.title}` }))
 
     expect(confirm).toHaveBeenCalledWith(`Delete “${card.title}”?`)
+    expect(screen.getByRole('button', { name: `Removing ${card.title}` })).toBeDisabled()
+    deleteRequest.resolve({ ok: true, status: 204, json: vi.fn() })
     expect(await screen.findByText(`“${card.title}” was removed.`)).toBeInTheDocument()
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(3))
     expect(fetchMock.mock.calls[1]).toEqual([`/api/cards/${card.id}`, { method: 'DELETE' }])

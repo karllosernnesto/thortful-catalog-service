@@ -62,6 +62,13 @@ The full assistant conversation will be supplied with the exercise. This file is
 - AI security review scope: The installed skill supplied React/browser guidance. Spring/Java was reviewed manually because that skill has no Java reference pack.
 - Candidate review status: Awaiting review and commit approval.
 
+## Interaction polish
+
+- Candidate instruction: Replace text deletion with an accessible inline SVG icon, add reduced-motion-safe creation highlighting and scrolling, retain badges/currency formatting, and verify pending action states without new UI libraries.
+- AI contribution: Added the icon control, three-second new-card feedback, conditional scrolling, reduced-motion handling, refined badge/button styles, and focused pending/accessibility/feedback assertions.
+- Existing behavior retained: The form and delete controls already disabled themselves while pending, prices already used `Intl.NumberFormat`, and categories already rendered as tags; these were tested and visually refined rather than reimplemented.
+- Candidate review status: Awaiting review and commit approval.
+
 ## Working principles
 
 - Candidate decisions and AI suggestions are labeled in `DECISIONS.md`.

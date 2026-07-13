@@ -116,7 +116,9 @@ The response contains `content`, `page`, `size`, `totalElements`, `totalPages`, 
 - Resets to the first page when search or category changes.
 - Uses the API's fixed newest-first ordering.
 - Provides an inline add-card form with native browser validation.
-- Confirms destructive deletion before calling the API.
+- Returns to the unfiltered first page after creation, highlights the new card briefly, and scrolls it into view when needed.
+- Uses reduced-motion-safe feedback and scrolling.
+- Confirms icon-triggered deletion before calling the API and disables pending actions.
 - Preserves the current list while a later page/filter request loads.
 - Shows explicit initial loading, updating, empty, success, and error states.
 - Adapts the card grid and forms from three columns to two and then one on narrower screens.

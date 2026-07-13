@@ -63,6 +63,17 @@ Verify the frontend production build:
 docker compose run --build --rm --no-deps frontend npm run build
 ```
 
+## Continuous integration
+
+GitHub Actions runs on pushes and pull requests targeting `main`. The single CI job:
+
+- Tests the Spring Boot backend with Java 21 and Maven.
+- Installs the locked frontend dependencies with Node.js 22 and `npm ci`.
+- Runs the frontend tests and production build.
+- Validates `compose.yaml` and builds both Docker images.
+
+The workflow performs verification only; it does not deploy, publish images, or require secrets.
+
 ## Optional non-Docker development
 
 Backend requirements:

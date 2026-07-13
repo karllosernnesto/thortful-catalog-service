@@ -69,6 +69,12 @@ The full assistant conversation will be supplied with the exercise. This file is
 - Existing behavior retained: The form and delete controls already disabled themselves while pending, prices already used `Intl.NumberFormat`, and categories already rendered as tags; these were tested and visually refined rather than reimplemented.
 - Candidate review status: Awaiting review and commit approval.
 
+## Continuous integration
+
+- Candidate instruction: Add one simple GitHub Actions workflow for pushes and pull requests to `main`, covering backend tests, frontend tests/build, Compose validation, and both Docker image builds without deployment or secrets.
+- AI contribution: Added a single least-privilege verification job using official checkout, Java, and Node setup actions with Maven/npm caching and commands matching the repository structure and lockfile.
+- Candidate review status: Awaiting review and commit approval.
+
 ## Working principles
 
 - Candidate decisions and AI suggestions are labeled in `DECISIONS.md`.

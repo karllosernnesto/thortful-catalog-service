@@ -103,3 +103,11 @@ This is a concise record of decisions made during the exercise. “Candidate” 
 - Decision: Use a three-, two-, and one-column card grid with two small breakpoints and accessible native controls.
 - Rationale: The required layout is simple enough that a UI framework would add dependency and styling overhead.
 - Trade-off: The project owns its CSS directly and does not receive prebuilt components or theme primitives.
+
+## 014 - Enforce reproducible frontend dependency installs
+
+- Status: accepted during final review
+- Source: AI security review
+- Decision: Commit `package-lock.json` and use `npm ci` in the frontend Dockerfile and documented workflows.
+- Rationale: Exact transitive versions make reviewer builds repeatable and allow dependency audits to evaluate the same dependency tree.
+- Trade-off: Dependency changes must deliberately update both `package.json` and the lockfile.

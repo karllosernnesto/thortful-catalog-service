@@ -27,7 +27,7 @@ Open:
 - Frontend: http://localhost:5173
 - Backend health endpoint: http://localhost:8080/api/health
 
-The frontend calls `/api/health`. Vite proxies this request to the `backend` service over the private Compose network, so the browser does not need to know the container hostname and no development CORS configuration is required.
+The frontend calls relative `/api` URLs. Vite proxies these requests to the `backend` service over the private Compose network, so the browser does not need to know the container hostname and no development CORS configuration is required.
 
 Stop the application with `Ctrl+C`, or from another terminal:
 
@@ -54,7 +54,13 @@ docker compose run --build --rm backend mvn test
 Run frontend tests:
 
 ```bash
-docker compose run --build --rm frontend npm test
+docker compose run --build --rm --no-deps frontend npm test
+```
+
+Verify the frontend production build:
+
+```bash
+docker compose run --build --rm --no-deps frontend npm run build
 ```
 
 ## Optional non-Docker development
@@ -76,11 +82,11 @@ Frontend requirements:
 
 ```bash
 cd frontend
-npm install
+npm ci
 npm run dev
 ```
 
-With both processes running locally, Vite defaults its `/api` proxy to `http://localhost:8080`. Tests can be run with `mvn test` in `backend/` and `npm test` in `frontend/`.
+With both processes running locally, Vite defaults its `/api` proxy to `http://localhost:8080`. Tests can be run with `mvn test` in `backend/` and `npm test` in `frontend/`. The committed npm lockfile and `npm ci` keep container, reviewer, and optional local frontend installs reproducible.
 
 ## API
 
@@ -167,7 +173,7 @@ This separation adds two builds, two containers, and proxy configuration compare
 
 H2 is configured as `jdbc:h2:mem:catalog` with Hibernate `create-drop`. Data exists only for the lifetime of the backend process. The same 1,200 deterministic cards are rebuilt on every restart. Cards created or deleted through the API last only until that process stops. This is deliberate for a repeatable interview exercise, not a production persistence strategy.
 
-More detailed decisions are recorded in [DECISIONS.md](DECISIONS.md), and AI collaboration is recorded in [AI_USAGE.md](AI_USAGE.md).
+More detailed decisions are recorded in [DECISIONS.md](DECISIONS.md), AI collaboration is recorded in [AI_USAGE.md](AI_USAGE.md), and the focused final security review is in [SECURITY_REVIEW.md](SECURITY_REVIEW.md).
 
 ## Troubleshooting
 

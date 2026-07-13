@@ -49,6 +49,19 @@ The full assistant conversation will be supplied with the exercise. This file is
 - AI suggestion: Avoid additional runtime libraries because React hooks and native browser features cover the required interactions clearly.
 - Candidate review status: Awaiting review and commit approval.
 
+### Candidate review outcome
+
+- Candidate accepted the generated UI and exact Milestone 3 commit message.
+- Candidate approved and pushed the commit to `origin/main`.
+- Automated browser control was unavailable; the candidate explicitly deferred the visual browser check to final verification.
+
+## Final verification
+
+- Candidate instruction: Rerun all tests/builds and Compose flows, perform a focused security review, reconcile documentation, scan repository hygiene, fix only meaningful issues, and provide a manual browser checklist.
+- AI finding and change: The initial frontend used exact direct dependency versions but lacked a lockfile. The AI generated `package-lock.json`, switched Docker and documented installs from `npm install` to `npm ci`, and recorded the reproducibility decision.
+- AI security review scope: The installed skill supplied React/browser guidance. Spring/Java was reviewed manually because that skill has no Java reference pack.
+- Candidate review status: Awaiting review and commit approval.
+
 ## Working principles
 
 - Candidate decisions and AI suggestions are labeled in `DECISIONS.md`.

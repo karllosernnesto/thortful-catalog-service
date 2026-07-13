@@ -37,6 +37,18 @@ The full assistant conversation will be supplied with the exercise. This file is
 - Candidate review status: Awaiting review and commit approval.
 - Explicit exclusion: No React catalog functionality or separate Milestone 3 work was included.
 
+### Candidate review outcome
+
+- Candidate accepted the generated backend and exact Milestone 2 commit message.
+- Candidate approved and pushed the commit to `origin/main`.
+
+## Milestone 3 - React catalog UI
+
+- Candidate instruction: Implement the listing page with debounced search, category filtering, pagination, totals, card creation, confirmed deletion, complete UI states, responsive behavior, and useful frontend tests.
+- AI contribution: Replaced the connectivity placeholder with a small API client, local React state orchestration, focused components, responsive CSS, and frontend behavior tests.
+- AI suggestion: Avoid additional runtime libraries because React hooks and native browser features cover the required interactions clearly.
+- Candidate review status: Awaiting review and commit approval.
+
 ## Working principles
 
 - Candidate decisions and AI suggestions are labeled in `DECISIONS.md`.

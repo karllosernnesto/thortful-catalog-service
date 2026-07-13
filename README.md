@@ -2,7 +2,7 @@
 
 A small Spring Boot and React catalog application for the thortful backend Java technical exercise.
 
-The backend provides a seeded greeting-card catalog with server-side search, category filtering, pagination, creation, and deletion. The current frontend still provides only the connectivity check; catalog UI work is deliberately reserved for a later milestone.
+The application provides a seeded greeting-card catalog with server-side search, category filtering, pagination, creation, and deletion through a responsive React UI.
 
 ## Requirements
 
@@ -103,6 +103,18 @@ All parameters are optional. Pages are zero-based, the default size is 20, and t
 
 The response contains `content`, `page`, `size`, `totalElements`, `totalPages`, `first`, and `last`.
 
+## Frontend behavior
+
+- Displays 12 cards per page and the server-reported total.
+- Debounces title/artist search for 350 ms to avoid a request per keystroke.
+- Resets to the first page when search or category changes.
+- Uses the API's fixed newest-first ordering.
+- Provides an inline add-card form with native browser validation.
+- Confirms destructive deletion before calling the API.
+- Preserves the current list while a later page/filter request loads.
+- Shows explicit initial loading, updating, empty, success, and error states.
+- Adapts the card grid and forms from three columns to two and then one on narrower screens.
+
 ### Create a card
 
 ```http
@@ -186,4 +198,4 @@ Confirm Docker can access the internet, then retry the build. Corporate proxies 
 
 ## Current scope
 
-The catalog backend is implemented. The React listing and mutation UI are intentionally reserved for the next frontend milestone.
+The required catalog backend and functional React UI are implemented. Authentication, durable persistence, image management, and production deployment remain deliberately out of scope for the exercise timebox.

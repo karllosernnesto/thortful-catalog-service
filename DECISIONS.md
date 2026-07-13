@@ -79,3 +79,27 @@ This is a concise record of decisions made during the exercise. “Candidate” 
 - Decision: Generate exactly 1,200 cards from fixed category, style, message, artist, price, and timestamp sequences when the database is empty.
 - Rationale: Reviewers receive realistic volume with repeatable search/filter results and no large static data file.
 - Trade-off: Generated combinations are representative rather than a curated production catalog.
+
+## 011 - Keep React state local and dependencies minimal
+
+- Status: accepted
+- Proposed by: AI suggestion following the candidate's React/Vite choice
+- Decision: Use React hooks, native `fetch`, native form controls, and `window.confirm` without a state library, router, form package, or component kit.
+- Rationale: The page has one API resource and a small amount of coordinated state. Keeping it local makes the live-pairing extension path easy to understand.
+- Trade-off: A larger application would benefit from shared server-state caching and a design system, but those dependencies would add more concepts than value here.
+
+## 012 - Debounce search and retain the current page while updating
+
+- Status: accepted
+- Proposed by: AI suggestion from the approved UI plan
+- Decision: Apply search 350 ms after typing stops, reset filters to page zero, request 12 cards per page, and leave existing cards visible during subsequent requests.
+- Rationale: This limits avoidable API traffic and avoids a visually disruptive blank state for every filter or page transition.
+- Trade-off: Search results intentionally lag input by a fraction of a second, and the implementation coordinates separate input and applied-search state.
+
+## 013 - Use responsive CSS rather than a UI framework
+
+- Status: accepted
+- Proposed by: AI suggestion
+- Decision: Use a three-, two-, and one-column card grid with two small breakpoints and accessible native controls.
+- Rationale: The required layout is simple enough that a UI framework would add dependency and styling overhead.
+- Trade-off: The project owns its CSS directly and does not receive prebuilt components or theme primitives.

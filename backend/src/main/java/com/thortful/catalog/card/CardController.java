@@ -33,8 +33,10 @@ public class CardController {
             @RequestParam(required = false) String search,
             @RequestParam(required = false) CardCategory category,
             @RequestParam(defaultValue = "0") @Min(0) int page,
-            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
-        return PageResponse.from(service.findCards(search, category, page, size));
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice) {
+        return PageResponse.from(service.findCards(search, category, page, size, minPrice, maxPrice));
     }
 
     @PostMapping

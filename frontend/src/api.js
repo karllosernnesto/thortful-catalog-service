@@ -10,10 +10,12 @@ async function request(path, options = {}) {
   return body
 }
 
-export function getCards({ search, category, page, size }, signal) {
+export function getCards({ search, category, page, size, minPrice, maxPrice }, signal) {
   const query = new URLSearchParams({ page: String(page), size: String(size) })
   if (search) query.set('search', search)
   if (category) query.set('category', category)
+  if (minPrice) query.set("min_price", minPrice)
+  if (maxPrice) query.set("max_price", maxPrice)
   return request(`/api/cards?${query}`, { signal })
 }
 

@@ -1,5 +1,6 @@
 package com.thortful.catalog.card;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDateTime;
 
@@ -25,11 +26,14 @@ public class CardService {
     }
 
     @Transactional(readOnly = true)
-    public Page<CardResponse> findCards(String search, CardCategory category, int page, int size) {
+    public Page<CardResponse> findCards(String search, CardCategory category, int page, int size,
+                                        Double minPrice, Double maxPrice) {
         String normalizedSearch = search == null || search.isBlank() ? null : search.trim();
+        BigDecimal price_min = minPrice != null ? BigDecimal.valueOf(minPrice) : null;
+        BigDecimal price_max = maxPrice != null ? BigDecimal.valueOf(maxPrice) : null;
         PageRequest pageRequest = PageRequest.of(page, size, CATALOG_SORT);
 
-        return repository.findCatalog(normalizedSearch, category, pageRequest)
+        return repository.findCatalog(normalizedSearch, category, price_min, price_max, pageRequest)
                 .map(CardResponse::from);
     }
 

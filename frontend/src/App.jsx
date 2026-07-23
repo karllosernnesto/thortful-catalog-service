@@ -21,6 +21,10 @@ export default function App() {
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('')
   const [page, setPage] = useState(0)
+  const [minPriceInput, setMinPriceInput] = useState('')
+  const [maxPriceInput, setMaxPriceInput] = useState('')
+  const [minPrice, setMinPrice] = useState('')
+  const [maxPrice, setMaxPrice] = useState('')
   const [catalog, setCatalog] = useState(EMPTY_PAGE)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -39,13 +43,25 @@ export default function App() {
   }, [searchInput])
 
   useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      setPage(0)
+      var minPrice = minPriceInput.trim()
+      var maxPrice = maxPriceInput.trim()
+      setMinPrice(minPrice)
+      setMaxPrice(maxPrice)
+    }, 300)
+
+    return () => window.clearTimeout(timeout)
+  }, [minPriceInput, maxPriceInput])
+
+  useEffect(() => {
     const controller = new AbortController()
 
     async function loadCatalog() {
       setLoading(true)
       setError('')
       try {
-        const result = await getCards({ search, category, page, size: PAGE_SIZE }, controller.signal)
+        const result = await getCards({ search, category, page, size: PAGE_SIZE, minPrice, maxPrice }, controller.signal)
         setCatalog(result)
       } catch (requestError) {
         if (requestError.name !== 'AbortError') {
@@ -58,7 +74,7 @@ export default function App() {
 
     loadCatalog()
     return () => controller.abort()
-  }, [search, category, page, refreshKey])
+  }, [search, category, page, minPrice, maxPrice, refreshKey])
 
   useEffect(() => {
     if (!highlightedId) return undefined
@@ -92,6 +108,10 @@ export default function App() {
       setSearchInput('')
       setSearch('')
       setCategory('')
+      setMinPriceInput('')
+      setMaxPriceInput('')
+      setMinPrice('')
+      setMaxPrice('')
       setPage(0)
       setRefreshKey((current) => current + 1)
     } catch (requestError) {
@@ -161,6 +181,28 @@ export default function App() {
                   <option key={option.value} value={option.value}>{option.label}</option>
                 ))}
               </select>
+            </label>
+            <label>
+              <span>Min price (£)</span>
+              <input
+                type="number"
+                value={minPriceInput}
+                onChange={(event) => setMinPriceInput(event.target.value)}
+                min="0"
+                step="0.01"
+                placeholder="0.00"
+              />
+            </label>
+            <label>
+              <span>Max price (£)</span>
+              <input
+                type="number"
+                value={maxPriceInput}
+                onChange={(event) => setMaxPriceInput(event.target.value)}
+                min="0"
+                step="0.01"
+                placeholder="999.99"
+              />
             </label>
           </div>
         </div>
